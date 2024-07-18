@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffie-Hellman Key Exchange</title>
+</head>
+<body>
+    <h1>Diffie-Hellman Key Exchange</h1>
+    <form id="dh-form">
+        <label for="prime">Prime Number (p):</label>
+        <input type="number" id="prime" required><br><br>
+
+        <label for="generator">Primitive Root (g):</label>
+        <input type="number" id="generator" required><br><br>
+
+        <label for="privateA">Private Key of User A (a):</label>
+        <input type="number" id="privateA" required><br><br>
+
+        <label for="privateB">Private Key of User B (b):</label>
+        <input type="number" id="privateB" required><br><br>
+
+        <button type="button" onclick="computeDH()">Compute Shared Secret</button>
+    </form>
+
+    <h2>Results:</h2>
+    <p id="publicA"></p>
+    <p id="publicB"></p>
+    <p id="sharedSecret"></p>
+
+    <script>
+        function modExp(base, exp, mod) {
+            let result = 1;
+            base = base % mod;
+            while (exp > 0) {
+                if (exp % 2 === 1) {
+                    result = (result * base) % mod;
+                }
+                exp = Math.floor(exp / 2);
+                base = (base * base) % mod;
+            }
+            return result;
+        }
+
+        function computeDH() {
+            const p = parseInt(document.getElementById('prime').value);
+            const g = parseInt(document.getElementById('generator').value);
+            const a = parseInt(document.getElementById('privateA').value);
+            const b = parseInt(document.getElementById('privateB').value);
+            const A = modExp(g, a, p);
+            const B = modExp(g, b, p);
+            const sharedSecretA = modExp(B, a, p);
+            const sharedSecretB = modExp(A, b, p);
+            document.getElementById('publicA').innerText = `Public Key of User A (A): ${A}`;
+            document.getElementById('publicB').innerText = `Public Key of User B (B): ${B}`;
+            document.getElementById('sharedSecret').innerText = `Shared Secret: ${sharedSecretA}`;
+            if (sharedSecretA !== sharedSecretB) {
+                alert('Error: Shared secrets do not match!');
+            }
+        }
+    </script>
+</body>
+</html>
